@@ -7,6 +7,17 @@ ohne Cloud-Zwang, mit lokaler SQLite-Datenbank und mobil-tauglicher Oberfläche.
 
 > Status: funktionsfähiger Prototyp (M1 + M2 + M5).
 
+## Screenshots
+
+### Geräteverwaltung
+![Geräteliste](screenshots/geraete.png)
+
+### Wartung & Störungen
+![Vorgänge](screenshots/vorgaenge.png)
+
+### DigitalPakt-Nachweisbericht
+![Bericht](screenshots/bericht.png)
+
 ## Funktionen
 
 - **Geräte (Geräteverwaltung)** — Anlegen, Bearbeiten, Löschen; Suche nach
