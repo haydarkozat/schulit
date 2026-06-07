@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Geräte · SchulIT{% endblock %}
+{% block nav_geraete %}active{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Geräte</h1>
+    <p class="muted">{{ geraete|length }} Gerät(e) im Bestand</p>
+  </div>
+  <a class="btn primary" href="/geraete/neu">+ Neues Gerät</a>
+</div>
+
+<form class="filterbar" method="get" action="/">
+  <input type="search" name="q" value="{{ q }}" placeholder="Suche: Bezeichnung oder Seriennr.">
+  <select name="status" onchange="this.form.submit()">
+    <option value="">Alle Status</option>
+    {% for s in status_werte %}
+      <option value="{{ s }}" {% if s == status_filter %}selected{% endif %}>{{ s }}</option>
+    {% endfor %}
+  </select>
+  <button class="btn" type="submit">Filtern</button>
+</form>
+
+{% if geraete %}
+<table class="grid">
+  <thead>
+    <tr>
+      <th>Bezeichnung</th><th>Typ</th><th>Raum</th>
+      <th>Status</th><th>Förderquelle</th><th class="right">Aktion</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for g in geraete %}
+    <tr>
+      <td data-label="Bezeichnung">
+        <a class="strong" href="/geraete/{{ g.id }}">{{ g.bezeichnung }}</a>
+        {% if g.seriennummer %}<span class="sn">{{ g.seriennummer }}</span>{% endif %}
+      </td>
+      <td data-label="Typ">{{ g.typ }}</td>
+      <td data-label="Raum">{{ raum_namen.get(g.raum_id, "–") }}</td>
+      <td data-label="Status">
+        {% set cls = {'in Betrieb':'ok','in Reparatur':'warn','defekt':'bad','ausgemustert':'off'} %}
+        <span class="pill {{ cls.get(g.status, 'off') }}">{{ g.status }}</span>
+      </td>
+      <td data-label="Förderquelle">{{ g.foerderquelle or "–" }}</td>
+      <td data-label="Aktion" class="right">
+        <a class="link" href="/geraete/{{ g.id }}/bearbeiten">Bearbeiten</a>
+        <form class="inline" method="post" action="/geraete/{{ g.id }}/loeschen"
+              onsubmit="return confirm('Gerät wirklich löschen?')">
+          <button class="link danger" type="submit">Löschen</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<div class="empty">
+  <p>Noch keine Geräte erfasst.</p>
+  <a class="btn primary" href="/geraete/neu">Erstes Gerät anlegen</a>
+</div>
+{% endif %}
+{% endblock %}

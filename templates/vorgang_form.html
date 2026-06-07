@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}Vorgang anlegen · SchulIT{% endblock %}
+{% block nav_geraete %}active{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Vorgang anlegen</h1>
+    <p class="muted">für {{ geraet.bezeichnung }}</p>
+  </div>
+  <a class="btn" href="/geraete/{{ geraet.id }}">Zurück</a>
+</div>
+
+<form class="card form" method="post" action="/geraete/{{ geraet.id }}/vorgaenge/neu">
+  <div class="row">
+    <label>Typ
+      <select name="typ">
+        {% for t in vorgang_typen %}
+        <option value="{{ t }}">{{ t }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>Status
+      <select name="status">
+        {% for s in vorgang_status %}
+        <option value="{{ s }}">{{ s }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>Datum
+      <input type="date" name="datum" value="{{ heute }}">
+    </label>
+  </div>
+
+  <label>Beschreibung
+    <textarea name="beschreibung" rows="3" placeholder="Was wurde gemacht / festgestellt?"></textarea>
+  </label>
+
+  <div class="row">
+    <label>Aufwand
+      <input name="aufwand" inputmode="decimal" placeholder="z. B. 30">
+    </label>
+    <label>Einheit
+      <select name="aufwand_einheit">
+        {% for e in aufwand_einheiten %}
+        <option value="{{ e }}">{{ e }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>Bearbeiter
+      <input name="bearbeiter" placeholder="z. B. Hausmeister / Dienstleister">
+    </label>
+  </div>
+
+  <fieldset>
+    <legend>Kosten (optional – für DigitalPakt-Beleg)</legend>
+    <div class="row">
+      <label>Kostenart
+        <select name="kostenart">
+          <option value="">–</option>
+          {% for k in kostenarten %}
+          <option value="{{ k }}">{{ k }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label>Kosten (€)
+        <input name="kosten" inputmode="decimal" placeholder="0,00">
+      </label>
+      <label>Beleg-Nr.
+        <input name="beleg_nr" placeholder="optional">
+      </label>
+    </div>
+  </fieldset>
+
+  <div class="actions">
+    <button class="btn primary" type="submit">Speichern</button>
+    <a class="btn" href="/geraete/{{ geraet.id }}">Abbrechen</a>
+  </div>
+</form>
+{% endblock %}

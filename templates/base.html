@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}SchulIT{% endblock %}</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="bar-inner">
+      <a class="brand" href="/">
+        <span class="brand-mark">⬡</span>
+        <span class="brand-name">SchulIT</span>
+        <span class="brand-sub">Schul-IT-Verwaltung</span>
+      </a>
+      <nav class="nav">
+        <a href="/" class="{% block nav_geraete %}{% endblock %}">Geräte</a>
+        <a href="/vorgaenge" class="{% block nav_vorgaenge %}{% endblock %}">Vorgänge</a>
+        <a href="/berichte" class="{% block nav_berichte %}{% endblock %}">Berichte</a>
+        <a href="/raeume" class="{% block nav_raeume %}{% endblock %}">Räume</a>
+      </nav>
+    </div>
+  </header>
+  <main class="content">
+    {% block content %}{% endblock %}
+  </main>
+  <footer class="foot">SchulIT · M1-Prototyp · Daten lokal (SQLite)</footer>
+</body>
+</html>

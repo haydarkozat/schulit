@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Räume · SchulIT{% endblock %}
+{% block nav_raeume %}active{% endblock %}
+{% block content %}
+<div class="page-head"><h1>Räume</h1></div>
+
+<form class="card form" method="post" action="/raeume">
+  <div class="row">
+    <label>Name *
+      <input name="name" required placeholder="z. B. Raum 204">
+    </label>
+    <label>Beschreibung
+      <input name="beschreibung" placeholder="optional">
+    </label>
+  </div>
+  <div class="actions"><button class="btn primary" type="submit">Raum anlegen</button></div>
+</form>
+
+{% if raeume %}
+<table class="grid">
+  <thead><tr><th>Name</th><th>Beschreibung</th><th class="right">Aktion</th></tr></thead>
+  <tbody>
+    {% for r in raeume %}
+    <tr>
+      <td data-label="Name"><span class="strong">{{ r.name }}</span></td>
+      <td data-label="Beschreibung">{{ r.beschreibung or "–" }}</td>
+      <td data-label="Aktion" class="right">
+        <form class="inline" method="post" action="/raeume/{{ r.id }}/loeschen"
+              onsubmit="return confirm('Raum löschen?')">
+          <button class="link danger" type="submit">Löschen</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<div class="empty"><p>Noch keine Räume angelegt.</p></div>
+{% endif %}
+{% endblock %}

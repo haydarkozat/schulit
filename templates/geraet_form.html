@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}{{ "Gerät bearbeiten" if geraet else "Neues Gerät" }} · SchulIT{% endblock %}
+{% block nav_geraete %}active{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>{{ "Gerät bearbeiten" if geraet else "Neues Gerät" }}</h1>
+  <a class="btn" href="/">Zurück</a>
+</div>
+
+<form class="card form" method="post"
+      action="{{ '/geraete/%d/bearbeiten'|format(geraet.id) if geraet else '/geraete/neu' }}">
+  <label>Bezeichnung *
+    <input name="bezeichnung" required value="{{ geraet.bezeichnung if geraet else '' }}"
+           placeholder="z. B. iPad 10,9&quot; #01">
+  </label>
+
+  <div class="row">
+    <label>Typ
+      <select name="typ">
+        {% for t in typen %}
+        <option value="{{ t }}" {% if geraet and geraet.typ == t %}selected{% endif %}>{{ t }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>Status
+      <select name="status">
+        {% for s in status_werte %}
+        <option value="{{ s }}" {% if geraet and geraet.status == s %}selected{% endif %}>{{ s }}</option>
+        {% endfor %}
+      </select>
+    </label>
+  </div>
+
+  <div class="row">
+    <label>Seriennummer
+      <input name="seriennummer" value="{{ geraet.seriennummer or '' if geraet else '' }}">
+    </label>
+    <label>Raum
+      <select name="raum_id">
+        <option value="">– kein Raum –</option>
+        {% for r in raeume %}
+        <option value="{{ r.id }}" {% if geraet and geraet.raum_id == r.id %}selected{% endif %}>{{ r.name }}</option>
+        {% endfor %}
+      </select>
+    </label>
+  </div>
+
+  <fieldset>
+    <legend>Förderung (optional – für DigitalPakt-Nachweis)</legend>
+    <div class="row">
+      <label>Förderquelle
+        <select name="foerderquelle">
+          <option value="">–</option>
+          {% for f in foerderquellen %}
+          <option value="{{ f }}" {% if geraet and geraet.foerderquelle == f %}selected{% endif %}>{{ f }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label>Anschaffungskosten (€)
+        <input name="anschaffungskosten" inputmode="decimal"
+               value="{{ geraet.anschaffungskosten|dezimal if geraet else '' }}">
+      </label>
+      <label>Inbetriebnahme
+        <input type="date" name="inbetriebnahme"
+               value="{{ geraet.inbetriebnahme.isoformat() if geraet and geraet.inbetriebnahme else '' }}">
+      </label>
+      <label>Beleg-Nr.
+        <input name="beleg_nr" value="{{ geraet.beleg_nr or '' if geraet else '' }}"
+               placeholder="Rechnungs-/Belegnr.">
+      </label>
+    </div>
+    {% if geraet and geraet.zweckbindung_bis %}
+      <p class="hint">Zweckbindung bis <strong>{{ geraet.zweckbindung_bis.strftime('%d.%m.%Y') }}</strong> (5 Jahre)</p>
+    {% endif %}
+  </fieldset>
+
+  <label>Notiz
+    <textarea name="notiz" rows="2">{{ geraet.notiz or '' if geraet else '' }}</textarea>
+  </label>
+
+  <div class="actions">
+    <button class="btn primary" type="submit">Speichern</button>
+    <a class="btn" href="/">Abbrechen</a>
+  </div>
+</form>
+{% endblock %}

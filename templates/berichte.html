@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Berichte · SchulIT{% endblock %}
+{% block nav_berichte %}active{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Berichte</h1>
+    <p class="muted">DigitalPakt-Verwendungsnachweis als PDF erzeugen</p>
+  </div>
+</div>
+
+<form class="card form" method="post" action="/berichte" target="_blank">
+  <fieldset>
+    <legend>Schule / Schulträger</legend>
+    <div class="row">
+      <label>Schule
+        <input name="schule" value="{{ schule }}">
+      </label>
+      <label>Schulträger
+        <input name="schultraeger" value="{{ schultraeger }}">
+      </label>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Zeitraum &amp; Förderung</legend>
+    <div class="row">
+      <label>von
+        <input type="date" name="von">
+      </label>
+      <label>bis
+        <input type="date" name="bis">
+      </label>
+      <label>Förderquelle
+        <select name="foerderquelle">
+          <option value="">Alle Förderquellen</option>
+          {% for f in foerderquellen %}
+          <option value="{{ f }}">{{ f }}</option>
+          {% endfor %}
+        </select>
+      </label>
+    </div>
+    <p class="hint">Leer lassen = gesamter Zeitraum / alle Quellen. Der Wartungs-Nachweis
+      wird bei gewählter Förderquelle auf deren Geräte begrenzt.</p>
+  </fieldset>
+
+  <div class="actions">
+    <button class="btn primary" type="submit">Bericht erstellen (PDF)</button>
+  </div>
+</form>
+
+<div class="card" style="margin-top:18px">
+  <h2 class="sub-h">Inhalt des Nachweises</h2>
+  <ol class="muted" style="margin:10px 0 0;padding-left:20px;line-height:1.9">
+    <li><strong>Sachbericht</strong> — automatischer Tätigkeitsbericht mit Verwendungserklärung</li>
+    <li><strong>Gesamtbelegliste</strong> — geförderte Geräte inkl. Beleg-Nr. und Summe</li>
+    <li><strong>Wartungs- und Support-Nachweis</strong> — Vorgänge im Zeitraum + Summen</li>
+    <li><strong>Zweckbindungs-Übersicht</strong> — Inbetriebnahme und Zweckbindung (5 Jahre)</li>
+  </ol>
+</div>
+{% endblock %}

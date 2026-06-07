@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+
+# Virtuelle Umgebung
+.venv/
+venv/
+env/
+
+# Lokale SQLite-Datenbank (wird beim Start neu erzeugt)
+*.db
+*.sqlite3
+
+# Generierte Berichte
+*.pdf
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Claude Code / Werkzeuge
+.claude/

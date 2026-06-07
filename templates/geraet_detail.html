@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}{{ geraet.bezeichnung }} · SchulIT{% endblock %}
+{% block nav_geraete %}active{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>{{ geraet.bezeichnung }}</h1>
+    <p class="muted">{{ geraet.typ }}{% if geraet.seriennummer %} · SN {{ geraet.seriennummer }}{% endif %}</p>
+  </div>
+  <div class="actions">
+    <a class="btn" href="/">Zurück</a>
+    <a class="btn" href="/geraete/{{ geraet.id }}/bearbeiten">Bearbeiten</a>
+    <a class="btn primary" href="/geraete/{{ geraet.id }}/vorgaenge/neu">+ Vorgang hinzufügen</a>
+  </div>
+</div>
+
+{% set cls = {'in Betrieb':'ok','in Reparatur':'warn','defekt':'bad','ausgemustert':'off'} %}
+<div class="card">
+  <dl class="kv">
+    <div><dt>Status</dt><dd><span class="pill {{ cls.get(geraet.status, 'off') }}">{{ geraet.status }}</span></dd></div>
+    <div><dt>Raum</dt><dd>{{ raum_namen.get(geraet.raum_id, "–") }}</dd></div>
+    <div><dt>Seriennummer</dt><dd>{{ geraet.seriennummer or "–" }}</dd></div>
+    <div><dt>Förderquelle</dt><dd>{{ geraet.foerderquelle or "–" }}</dd></div>
+    <div><dt>Anschaffungskosten</dt><dd>{{ geraet.anschaffungskosten|euro }}</dd></div>
+    <div><dt>Beleg-Nr.</dt><dd>{{ geraet.beleg_nr or "–" }}</dd></div>
+    <div><dt>Inbetriebnahme</dt><dd>{{ geraet.inbetriebnahme.strftime('%d.%m.%Y') if geraet.inbetriebnahme else "–" }}</dd></div>
+    {% if geraet.zweckbindung_bis %}
+    <div><dt>Zweckbindung bis</dt><dd>{{ geraet.zweckbindung_bis.strftime('%d.%m.%Y') }}</dd></div>
+    {% endif %}
+  </dl>
+  {% if geraet.notiz %}<p class="hint">Notiz: {{ geraet.notiz }}</p>{% endif %}
+</div>
+
+<div class="page-head" style="margin-top:26px">
+  <h2 class="sub-h">Verlauf <span class="muted">({{ vorgaenge|length }})</span></h2>
+  <a class="btn" href="/geraete/{{ geraet.id }}/vorgaenge/neu">+ Vorgang</a>
+</div>
+
+{% if vorgaenge %}
+{% set typ_cls = {'Wartung':'info','Störung':'bad'} %}
+{% set st_cls = {'neu':'info','in Bearbeitung':'warn','erledigt':'ok'} %}
+<ul class="timeline">
+  {% for v in vorgaenge %}
+  <li>
+    <span class="dot {{ typ_cls.get(v.typ, 'off') }}"></span>
+    <div class="tl-card">
+      <div class="tl-head">
+        <span class="tl-date">{{ v.datum.strftime('%d.%m.%Y') }}</span>
+        <span class="pill {{ typ_cls.get(v.typ, 'off') }}">{{ v.typ }}</span>
+        <span class="pill {{ st_cls.get(v.status, 'off') }}">{{ v.status }}</span>
+        <form class="inline tl-del" method="post" action="/vorgaenge/{{ v.id }}/loeschen"
+              onsubmit="return confirm('Vorgang wirklich löschen?')">
+          <button class="link danger" type="submit">Löschen</button>
+        </form>
+      </div>
+      {% if v.beschreibung %}<p class="tl-text">{{ v.beschreibung }}</p>{% endif %}
+      <div class="tl-meta">
+        {% if v.bearbeiter %}<span>👤 {{ v.bearbeiter }}</span>{% endif %}
+        {% if v.aufwand is not none %}<span>⏱ {{ '%g'|format(v.aufwand) }} {{ v.aufwand_einheit }}</span>{% endif %}
+        {% if v.kostenart %}<span>🏷 {{ v.kostenart }}</span>{% endif %}
+        {% if v.kosten is not none %}<span>💶 {{ v.kosten|euro }}</span>{% endif %}
+        {% if v.beleg_nr %}<span>🧾 Beleg {{ v.beleg_nr }}</span>{% endif %}
+      </div>
+    </div>
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<div class="empty">
+  <p>Noch keine Vorgänge für dieses Gerät.</p>
+  <a class="btn primary" href="/geraete/{{ geraet.id }}/vorgaenge/neu">Ersten Vorgang anlegen</a>
+</div>
+{% endif %}
+{% endblock %}

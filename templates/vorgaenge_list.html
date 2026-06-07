@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Vorgänge · SchulIT{% endblock %}
+{% block nav_vorgaenge %}active{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Vorgänge</h1>
+    <p class="muted">{{ vorgaenge|length }} Vorgang/Vorgänge · Wartung &amp; Störung</p>
+  </div>
+</div>
+
+<form class="filterbar" method="get" action="/vorgaenge">
+  <select name="typ" onchange="this.form.submit()">
+    <option value="">Alle Typen</option>
+    {% for t in vorgang_typen %}
+      <option value="{{ t }}" {% if t == typ_filter %}selected{% endif %}>{{ t }}</option>
+    {% endfor %}
+  </select>
+  <select name="status" onchange="this.form.submit()">
+    <option value="">Alle Status</option>
+    {% for s in vorgang_status %}
+      <option value="{{ s }}" {% if s == status_filter %}selected{% endif %}>{{ s }}</option>
+    {% endfor %}
+  </select>
+  <input type="date" name="von" value="{{ von }}" aria-label="von Datum" title="von">
+  <input type="date" name="bis" value="{{ bis }}" aria-label="bis Datum" title="bis">
+  <button class="btn" type="submit">Filtern</button>
+  {% if typ_filter or status_filter or von or bis %}
+    <a class="btn" href="/vorgaenge">Zurücksetzen</a>
+  {% endif %}
+</form>
+
+{% if vorgaenge %}
+<table class="grid">
+  <thead>
+    <tr>
+      <th>Datum</th><th>Gerät</th><th>Typ</th><th>Beschreibung</th>
+      <th>Bearbeiter</th><th class="right">Kosten</th><th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% set typ_cls = {'Wartung':'info','Störung':'bad'} %}
+    {% set st_cls = {'neu':'info','in Bearbeitung':'warn','erledigt':'ok'} %}
+    {% for v in vorgaenge %}
+    <tr>
+      <td data-label="Datum">{{ v.datum.strftime('%d.%m.%Y') }}</td>
+      <td data-label="Gerät">
+        <a class="strong" href="/geraete/{{ v.geraet_id }}">{{ geraet_namen.get(v.geraet_id, '–') }}</a>
+      </td>
+      <td data-label="Typ"><span class="pill {{ typ_cls.get(v.typ, 'off') }}">{{ v.typ }}</span></td>
+      <td data-label="Beschreibung">{{ v.beschreibung or "–" }}</td>
+      <td data-label="Bearbeiter">{{ v.bearbeiter or "–" }}</td>
+      <td data-label="Kosten" class="right">{{ v.kosten|euro }}</td>
+      <td data-label="Status"><span class="pill {{ st_cls.get(v.status, 'off') }}">{{ v.status }}</span></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<div class="empty">
+  <p>Keine Vorgänge gefunden.</p>
+  <p class="muted">Vorgänge werden auf der Detailseite eines Geräts angelegt.</p>
+</div>
+{% endif %}
+{% endblock %}
